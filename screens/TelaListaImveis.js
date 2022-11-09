@@ -1,15 +1,18 @@
 import * as React from "react";
-import { Text, StyleSheet, Image, Pressable, View } from "react-native";
+import { Text, StyleSheet, Image, Pressable, View, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ImovelTab from "../components/ImovelTab";
 
 const TelaListaImveis = () => {
   const navigation = useNavigation();
+  const [imvel, setImvel] = React.useState=([])
 
   return (
     <View style={styles.telaListaImveis}>
-      <ImovelTab />
       <Text style={styles.avaliadorDeImoveis}>Avaliador de Imoveis</Text>
+      
+
+
       <Image
         style={styles.botoRecarregarIcon}
         resizeMode="cover"

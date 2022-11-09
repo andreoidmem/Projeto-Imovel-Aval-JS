@@ -6,7 +6,7 @@ import TelaAddImvel from "./screens/TelaAddImvel";
 import TelaVerImvel from "./screens/TelaVerImvel";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 
 const App = () => {
   const [hideSplashScreen, setHideSplashScreen] = React.useState(true);
