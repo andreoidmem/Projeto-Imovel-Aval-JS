@@ -41,7 +41,8 @@ const TelaAddImvel = () => {
                   placeholderTextColor="#23856d"
                   autoComplete="off"
                   type="cpf"
-
+                  value={CPF}
+                  onChangeText={ input => setCPF(input)}
                   
                 />
               </View>
