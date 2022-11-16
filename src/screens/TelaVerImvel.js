@@ -14,7 +14,7 @@ const TelaVerImvel = () => {
   const onEditImageClick = useCallback(() => {
     Alert.alert("Editar Registro?", "Confirmação", [
       {
-        text: "Editar",
+        text: "Habilitar Ediçãoclear",
         onPress: () => console.log("Editar pressed"),
       },
       {

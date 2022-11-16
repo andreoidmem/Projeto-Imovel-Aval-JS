@@ -1,26 +1,21 @@
 import * as React from "react";
-import { View, StyleSheet, Text, Image, Pressable } from "react-native";
+import { View, StyleSheet, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const ImovelTab = () => {
   const navigation = useNavigation();
 
   return (
-    <Pressable
-      style={styles.imvelTemplatePressable}
-      onPress={() => navigation.navigate("TelaVerImvel")}
-    >
-      <View style={styles.groupView}>
-        <View style={styles.rectangleView} />
-        <Text style={styles.imvelNumeroText}>N°</Text>
-        <Text style={styles.textoImvel}>Imóvel</Text>
-        <Image
-          style={styles.houseIcon}
-          resizeMode="cover"
-          source={require("../assets/houseicon.png")}
-        />
-      </View>
-    </Pressable>
+    <View style={styles.imoveis}>
+          <View style={styles.rectangleView } onPress={() => navigation.navigate("TelaVerImvel")} />
+          <Text style={styles.imvelNumeroText}>N°</Text>
+          <Text style={styles.textoImvel}>Imóvel</Text>
+          <Image
+            style={styles.houseIcon}
+            resizeMode="cover"
+            source={require("../src/assets/houseicon.png")}
+          />
+    </View>
   );
 };
 
@@ -68,14 +63,7 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  groupView: {
-    position: "absolute",
-    top: 0,
-    left: 6,
-    height: 45,
-    alignSelf: "stretch",
-  },
-  imvelTemplatePressable: {
+  imoveis: {
     position: "absolute",
     height: "6.63%",
     transform: [
@@ -85,7 +73,7 @@ const styles = StyleSheet.create({
     ],
     top: "10%",
     bottom: "83.38%",
-    left: "50%",
+    left: "55%",
     width: 359,
   },
 });

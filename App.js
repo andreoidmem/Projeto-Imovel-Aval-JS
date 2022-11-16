@@ -1,12 +1,14 @@
 const Stack = createNativeStackNavigator();
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import TelaListaImveis from "./screens/TelaListaImveis";
-import TelaAddImvel from "./screens/TelaAddImvel";
-import TelaVerImvel from "./screens/TelaVerImvel";
+import TelaListaImveis from "./src/screens/TelaListaImveis";
+import TelaAddImvel from "./src/screens/TelaAddImvel";
+import TelaVerImvel from "./src/screens/TelaVerImvel";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View } from "react-native";
+
+const stack = createNativeStackNavigator()
 
 const App = () => {
   const [hideSplashScreen, setHideSplashScreen] = React.useState(true);
@@ -16,21 +18,32 @@ const App = () => {
     <>
       <NavigationContainer>
         {hideSplashScreen ? (
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator initialRouteName="TelaListaImveis">
             <Stack.Screen
-              name="TelaListaImveis"
+              name="Lista de Imóveis"
               component={TelaListaImveis}
-              options={{ headerShown: false }}
+              options={{ 
+                headerTintColor: "#68D4BA",
+                headerStyle:{backgroundColor:"#18614F"}
+               }}
             />
             <Stack.Screen
               name="TelaAddImvel"
               component={TelaAddImvel}
-              options={{ headerShown: false }}
+              options={{ 
+                title: "Cadastro de novo imóvel",
+                headerTintColor: "#68D4BA",
+                headerStyle:{backgroundColor:"#18614F"}
+               }}
             />
             <Stack.Screen
               name="TelaVerImvel"
               component={TelaVerImvel}
-              options={{ headerShown: false }}
+              options={{ 
+                title: "Visualização de ímovel",
+                headerTintColor: "#68D4BA",
+                headerStyle:{backgroundColor:"#18614F"}
+               }}
             />
           </Stack.Navigator>
         ) : (
