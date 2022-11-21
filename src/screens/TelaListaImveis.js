@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { Text, StyleSheet, Image, Pressable, View, FlatList, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, Image, Pressable, View, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import db from "../config/firebaseconfig";
 
@@ -19,7 +19,7 @@ const TelaListaImveis = () => {
    }, [])
 
   return (
-    <View style={styles.telaListaImveis}>
+    <SafeAreaView style={styles.telaListaImveis}>
   
       <Image
         style={styles.botoRecarregarIcon}
@@ -43,23 +43,16 @@ const TelaListaImveis = () => {
         renderItem={( { item } )=>{
           return(
             <View style={styles.Tasks}>
-            <TouchableOpacity
-              style={styles.deleteTask}
-              onPress={() => {
-                deleteTask(item.id)
-              }}
-            >
-            </TouchableOpacity>
             <Text
               style={styles.DescriptionTask}
               onPress={()=>
-                navigation.navigate("Details",{
+                navigation.navigate("TelaVerImvel",{
                   id: item.id,
                   description: item.description,
                 })
               }
             >
-            {item.details}  
+            {item.DESTINO}  
             </Text>  
  
           </View>
@@ -77,7 +70,7 @@ const TelaListaImveis = () => {
           source={require("../assets/boto-add2.png")}
         />
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -114,19 +107,15 @@ const styles = StyleSheet.create({
     height: 55,
   },
   telaListaImveis: {
-    position: "relative",
-    backgroundColor: "#fff",
     flex: 1,
-    width: "100%",
-    height: 800,
-    overflow: "hidden",
+    backgroundColor:"#fff",
+    paddingTop: 65
   },
   Tasks:{
     width:"100%",
     flexDirection:"row",
     justifyContent:"center",
-    marginTop:85,
-    marginLeft: 21
+    marginTop:15,
    },
    DescriptionTask:{
     width:"75%",

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useState } from "react";
 import {
   Text,
   StyleSheet,
@@ -14,41 +13,14 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
-import { TextInputMaskMethods } from "react-native-masked-text"
-import db from "../config/firebaseconfig";
 
 
 const TelaAddImvel = () => {
-  const [CPF, setCPF,] = React.useState(''); //CPF DO CLIENTE
-  const [CLIENTE, setCLIENTE,] = React.useState(''); // NOME CORRETOR
-  const [CELL, setCEll,] = React.useState(''); //N° PARA CONTATO
-  const [DATA, setDATA,] = React.useState(''); // DATA DA AVALIAÇÃO
-  const [CORRETOR, setCORRETOR,] = React.useState(''); // NOME CORRETOR
-  const [DESTINO, setDESTINO,] = React.useState(''); // ENDEREÇO DO IMOVEL
-  const [BAIRRO, setBAIRRO,] = React.useState(''); // BAIRRO DO IM0VEL
-  const [AREA, setAREA,] = React.useState(''); // BAIRRO DO IM0VEL
-  const [R$AVAL, setR$AVAL,] = React.useState(''); // VALOR SUPOSTO PELA AVALIAÇÃO DO CORRETOR
-  const [R$CLIENT, setR$CLIENT,] = React.useState(''); // VALOR SUGERIDO PELO CLIENTE
-  const [R$FINAL, setR$FINAL] = React.useState(''); // VALOR FINAL BASEADO NA MÉDIA SUGERIDA + VALOR DA AVALIAÇÃO DO CORRETOR
-  
-
   const navigation = useNavigation();
-  
-  function addImovel() {
-    db.collection("ImovelDB").add({
-      CPF: CPF,
-      CELL: CELL,
-      DATA: DATA,
-      CORRETOR: CORRETOR,
-      DESTINO: DESTINO,
-      BAIRRO: BAIRRO,
-      ÁREA: AREA,
-      PREÇO_AVALIADO: R$AVAL,
-      PREÇO_CLIENTE: R$CLIENT,
-      PREÇO_FINAL: R$FINAL,
-    })
-    navigation.goBack()
-  }
+  const [CPF, setCPF,] = React.useState('');
+  const [CELL, setCEll,] = React.useState('');
+  const [PCRT, setPCRT,] = React.useState('');
+  const [DATA, setDATA,] = React.useState('');
 
   return (
     <KeyboardAvoidingView style={flex = 1}>
@@ -69,13 +41,15 @@ const TelaAddImvel = () => {
                   placeholderTextColor="#23856d"
                   autoComplete="off"
                   type="cpf"
-                  onChangeText={input => setCPF(input)}
                   value={CPF}
+                  onChangeText={ input => setCPF(input)}
+                  
                 />
               </View>
               <View style={styles.nomePropietaroFieldView}>
                 <View style={styles.headerView1}>
                   <Text style={styles.labelText1}>Nome</Text>
+                  <Text style={styles.descriptionText1}>Description</Text>
                 </View>
                 <TextInput
                   style={[styles.fieldTextInput1, styles.mt4]}
@@ -83,63 +57,20 @@ const TelaAddImvel = () => {
                   keyboardType="default"
                   autoCapitalize="words"
                   placeholderTextColor="#23856d"
-                  onChangeText={input => setCLIENTE(input)}
-                  value={CLIENTE}
-
                 />
               </View>
-              <Text style={styles.textoDadosPropietario}>
-                Dados do Proprietario/Solicitante
-              </Text>
             </View>
+            <Text style={styles.textoDadosPropietario}>
+              Dados do Proprietario/Solicitante
+            </Text>
             <View style={styles.inputDadosCorretor}>
-              <View style={styles.valorFinalFieldView}>
+              <View style={styles.preoCorretorFieldView}>
                 <View style={styles.headerView2}>
-                  <Text style={styles.labelText2}>Valor final da avaliação</Text>
+                  <Text style={styles.labelText2}>Preço do Corretor</Text>
+                  <Text style={styles.descriptionText2}>Description</Text>
                 </View>
                 <TextInputMask
                   style={[styles.fieldTextInput2, styles.mt4]}
-                  placeholder="Valor final em R$"
-                  keyboardType="numeric"
-                  autoCapitalize="none"
-                  placeholderTextColor="#23856d"
-                  type="money"
-                  options={{
-                    precision: 2,
-                    separator: ',',
-                    delimiter: '.',
-                    unit: 'R$',
-                    suffixUnit: '',
-                  }}
-                  includeRawValueInChangeText={true}
-                  onChangeText={(rawValue) => setR$FINAL(rawValue)}                 
-                  value={R$FINAL}
-
-                  
-                />
-              </View>
-              <View style={styles.sugesto3DropdownView}>
-                <View style={styles.headerView3}>
-                  <Text style={styles.labelText3}>Amostra 3</Text>
-                </View>
-                <View style={[styles.fieldView, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
-              </View>
-              <View style={styles.sugesto2DropdownView}>
-                <View style={styles.headerView4}>
-                  <Text style={styles.labelText4}>Amostra 2</Text>
-                </View>
-                <View style={[styles.fieldView1, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
-              </View>
-              <View style={styles.preoSugeridoFieldView}>
-                <View style={styles.headerView5}>
-                  <Text style={styles.labelText5}>Valor Sugerido</Text>
-                </View>
-                <TextInputMask
-                  style={[styles.fieldTextInput3, styles.mt4]}
                   placeholder="R$"
                   keyboardType="numeric"
                   placeholderTextColor="#23856d"
@@ -151,142 +82,87 @@ const TelaAddImvel = () => {
                     unit: 'R$',
                     suffixUnit: ''
                   }}
-                  includeRawValueInChangeText={true}
-                  onChangeText={(rawValue) => setR$CLIENT(rawValue)}                 
-                  value={R$CLIENT}
-
-
-
-                />
-              </View>
-              <View style={styles.sugesto1DropdownView}>
-                <View style={styles.headerView6}>
-                  <Text style={styles.labelText6}>Amostra 1</Text>
-                </View>
-                <View style={[styles.fieldView2, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
-              </View>
-              <View style={styles.preoCorretorFieldView}>
-                <View style={styles.headerView7}>
-                  <Text style={styles.labelText7}>Valor por avaliação</Text>
-                </View>
-                <TextInputMask
-                  style={[styles.fieldTextInput4, styles.mt4]}
-                  placeholder="R$"
-                  keyboardType="numeric"
-                  placeholderTextColor="#23856d"
-                  type="money"
-                  options={{
-                    precision: 2,
-                    separator: ',',
-                    delimiter: '.',
-                    unit: 'R$',
-                    suffixUnit: ''
-                  }}
-                  includeRawValueInChangeText={true}
-                  onChangeText={(rawValue) => setR$AVAL(rawValue)}                 
-                  value={R$AVAL}
+                  value={PCRT}
+                  onChangeText={ input => setPCRT(input)}
                 />
               </View>
               <View style={styles.preoMedioFieldView}>
-                <View style={styles.headerView8}>
-                  <Text style={styles.labelText8}>Valor Médio Sugerido</Text>
+                <View style={styles.headerView3}>
+                  <Text style={styles.labelText3}>Preço Médio Sugerido</Text>
+                  <Text style={styles.descriptionText3}>Description</Text>
                 </View>
-                <TextInputMask
-                  style={[styles.fieldTextInput5, styles.mt4]}
-                  placeholder="R$"
-                  keyboardType="numeric"
+                <TextInput
+                  style={[styles.fieldTextInput3, styles.mt4]}
+                  placeholder="Baseado no bairro"
+                  keyboardType="default"
+                  autoCapitalize="none"
                   placeholderTextColor="#23856d"
-                  type="money"
-                  options={{
-                    precision: 2,
-                    separator: ',',
-                    delimiter: '.',
-                    unit: 'R$',
-                    suffixUnit: ''
-                  }}
                   editable={false}
                 />
               </View>
-              <View style={styles.areaFieldView}>
-                <View style={styles.headerView9}>
-                  <Text style={styles.labelText9}>Área do ímovel</Text>
-                </View>
-                <TextInput
-                  style={[styles.fieldTextInput6, styles.mt4]}
-                  placeholder="insira em 'M² x M²'"
-                  keyboardType="default"
-                  placeholderTextColor="#23856d"
-                  onChangeText={input => setAREA(input)}
-                  value={AREA}
-
-                />
-              </View>
               <View style={styles.bairroFieldView}>
-                <View style={styles.headerView10}>
-                  <Text style={styles.labelText10}>Bairro</Text>
+                <View style={styles.headerView4}>
+                  <Text style={styles.labelText4}>Bairro</Text>
+                  <Text style={styles.descriptionText4}>Description</Text>
                 </View>
                 <TextInput
-                  style={[styles.fieldTextInput7, styles.mt4]}
+                  style={[styles.fieldTextInput4, styles.mt4]}
                   placeholder="Localização"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
-                  onChangeText={input => setBAIRRO(input)}
-                  value={BAIRRO}
-
                 />
               </View>
               <View style={styles.destinoFieldView}>
-                <View style={styles.headerView11}>
-                  <Text style={styles.labelText11}>Destino</Text>
+                <View style={styles.headerView5}>
+                  <Text style={styles.labelText5}>Destino</Text>
+                  <Text style={styles.descriptionText5}>Description</Text>
                 </View>
                 <TextInput
-                  style={[styles.fieldTextInput8, styles.mt4]}
+                  style={[styles.fieldTextInput5, styles.mt4]}
                   placeholder="Laudo de Avaliação"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
-                  onChangeText={input => setDESTINO(input)}
-                  value={DESTINO}
-
                 />
               </View>
               <View style={styles.contatoFieldView}>
-                <View style={styles.headerView12}>
-                  <Text style={styles.labelText12}>Contato</Text>
+                <View style={styles.headerView6}>
+                  <Text style={styles.labelText6}>Contato</Text>
+                  <Text style={styles.descriptionText6}>Description</Text>
                 </View>
                 <TextInputMask
-                  style={[styles.fieldTextInput9, styles.mt4]}
+                  style={[styles.fieldTextInput6, styles.mt4]}
                   placeholder="Solicitação do cliente"
                   keyboardType="number-pad"
                   placeholderTextColor="#23856d"
                   type="cel-phone"
                   options={{
-                    maskType: "BRL",
+                    maskType:"BRL",
                     withDDD: true,
                     dddMask: '(99) '
                   }}
                   value={CELL}
-                  onChangeText={input => setCEll(input)}
+                  onChangeText= { input => setCEll(input)}
                 />
               </View>
               <View style={styles.corretorFieldView}>
-                <View style={styles.headerView13}>
-                  <Text style={styles.labelText13}>Corretor</Text>
+                <View style={styles.headerView7}>
+                  <Text style={styles.labelText7}>Corretor</Text>
+                  <Text style={styles.descriptionText7}>Description</Text>
                 </View>
                 <TextInput
-                  style={[styles.fieldTextInput10, styles.mt4]}
+                  style={[styles.fieldTextInput7, styles.mt4]}
                   placeholder="Nome do Corretor"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
                 />
               </View>
               <View style={styles.dataFieldView}>
-                <View style={styles.headerView14}>
-                  <Text style={styles.labelText14}>Data</Text>
+                <View style={styles.headerView8}>
+                  <Text style={styles.labelText8}>Data</Text>
+                  <Text style={styles.descriptionText8}>Description</Text>
                 </View>
                 <TextInputMask
-                  style={[styles.fieldTextInput11, styles.mt4]}
+                  style={[styles.fieldTextInput8, styles.mt4]}
                   placeholder="Dia/Mês/Ano"
                   keyboardType="number-pad"
                   autoCapitalize="none"
@@ -296,7 +172,7 @@ const TelaAddImvel = () => {
                     format: 'DD/MM/YYYY'
                   }}
                   value={DATA}
-                  onChangeText={input => setDATA(input)}
+                  onChangeText= {input => setDATA(input)}
                 />
               </View>
             </View>
@@ -313,7 +189,7 @@ const TelaAddImvel = () => {
             </Text>
             <Pressable
               style={styles.botoCONFIRMAPressable}
-              onPress={() => addImovel()}
+              onPress={() => navigation.navigate("TelaListaImveis")}
             >
               <Image
                 style={styles.icon}
@@ -322,6 +198,7 @@ const TelaAddImvel = () => {
               />
             </Pressable>
           </View>
+          
         </TouchableWithoutFeedback>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -332,45 +209,6 @@ const TelaAddImvel = () => {
 const styles = StyleSheet.create({
   mt4: {
     marginTop: 4,
-  },
-  fieldDropdownValue: {
-    color: "#23856d",
-    fontSize: 12,
-    fontFamily: "Roboto",
-  },
-  fieldDropdownText: {
-    color: "#23856d",
-    fontWeight: "500",
-    fontFamily: "Roboto",
-  },
-  fieldDropdowndropDownContainer: {
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-  },
-  fieldDropdown1Value: {
-    color: "#23856d",
-    fontSize: 12,
-    fontFamily: "Roboto",
-  },
-  fieldDropdown1Text: {
-    color: "#23856d",
-    fontWeight: "500",
-    fontFamily: "Roboto",
-  },
-  fieldDropdown1dropDownContainer: {
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-  },
-  fieldDropdown2Value: {
-    color: "#23856d",
-    fontSize: 12,
-    fontFamily: "Roboto",
-  },
-  fieldDropdown2Text: {
-    color: "#23856d",
-    fontWeight: "500",
-    fontFamily: "Roboto",
-  },
-  fieldDropdown2dropDownContainer: {
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
   },
   labelText: {
     position: "relative",
@@ -408,10 +246,47 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
+  errorMessageText: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
   cPFCNPJFieldView: {
     position: "absolute",
-    marginLeft: -173,
-    top: 125,
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
+    top: 89,
     left: "50%",
     width: 346,
     height: 96,
@@ -427,6 +302,15 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     color: "#000",
     textAlign: "left",
+  },
+  descriptionText1: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#000",
+    textAlign: "left",
+    display: "none",
   },
   headerView1: {
     flexDirection: "column",
@@ -448,19 +332,68 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     fontFamily: "roboto",
   },
+  errorMessageText1: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText1: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText1: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView1: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
   nomePropietaroFieldView: {
     position: "absolute",
-    marginLeft: -173,
-    top: 36,
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
+    top: 0,
     left: "50%",
     width: 346,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
+  inputDadosPropietario: {
+    position: "absolute",
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
+    top: 576,
+    left: "50%",
+    width: 346,
+    height: 185,
+  },
   textoDadosPropietario: {
     position: "absolute",
-    top: 0,
+    top: 540,
     left: 0,
     fontSize: 21,
     fontWeight: "500",
@@ -470,26 +403,25 @@ const styles = StyleSheet.create({
     width: 360,
     height: 25,
   },
-  inputDadosPropietario: {
-    position: "absolute",
-    marginLeft: -180,
-    top: 801,
-    left: "50%",
-    width: 360,
-    height: 221,
-  },
   labelText2: {
     position: "relative",
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 24,
     fontWeight: "500",
     fontFamily: "Roboto",
     color: "#000",
-    textAlign: "center",
-    width: 166,
+    textAlign: "left",
+  },
+  descriptionText2: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#000",
+    textAlign: "left",
+    display: "none",
   },
   headerView2: {
-    width: 166,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
@@ -510,106 +442,73 @@ const styles = StyleSheet.create({
     fontFamily: "roboto",
     fontWeight: "bold",
   },
-  valorFinalFieldView: {
+  errorMessageText2: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText2: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText2: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView2: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
+  preoCorretorFieldView: {
     position: "absolute",
-    marginLeft: -83.12,
-    top: 548,
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
+    top: 271,
     left: "50%",
-    width: 166,
+    width: 166.25,
+    height: 77,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
   labelText3: {
     position: "relative",
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 24,
     fontWeight: "500",
     fontFamily: "Roboto",
     color: "#000",
     textAlign: "left",
+  },
+  descriptionText3: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#000",
+    textAlign: "left",
+    display: "none",
   },
   headerView3: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  dropDownPicker: {
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-  },
-  fieldView: {
-    alignSelf: "stretch",
-    borderRadius: 5,
-    height: 48,
-    flexShrink: 0,
-    overflow: "hidden",
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    boxSizing: "border-box",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  sugesto3DropdownView: {
-    position: "absolute",
-    marginLeft: 6.63,
-    top: 457,
-    left: "50%",
-    width: 166.25,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  labelText4: {
-    position: "relative",
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "500",
-    fontFamily: "Roboto",
-    color: "#000",
-    textAlign: "left",
-  },
-  headerView4: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  dropDownPicker1: {
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-  },
-  fieldView1: {
-    alignSelf: "stretch",
-    borderRadius: 5,
-    height: 48,
-    flexShrink: 0,
-    overflow: "hidden",
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    boxSizing: "border-box",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  sugesto2DropdownView: {
-    position: "absolute",
-    marginLeft: -173.12,
-    top: 457,
-    left: "50%",
-    width: 166.25,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  labelText5: {
-    position: "relative",
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "500",
-    fontFamily: "Roboto",
-    color: "#000",
-    textAlign: "left",
-  },
-  headerView5: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
@@ -630,17 +529,54 @@ const styles = StyleSheet.create({
     fontFamily: "roboto",
     fontWeight: "bold",
   },
-  preoSugeridoFieldView: {
+  errorMessageText3: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText3: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText3: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView3: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
+  preoMedioFieldView: {
     position: "absolute",
-    marginLeft: 6.63,
-    top: 366,
+    transform: [
+      {
+        translateX: 6.75,
+      },
+    ],
+    top: 182,
     left: "50%",
     width: 166.25,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  labelText6: {
+  labelText4: {
     position: "relative",
     fontSize: 16,
     lineHeight: 24,
@@ -649,47 +585,16 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "left",
   },
-  headerView6: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  dropDownPicker2: {
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-  },
-  fieldView2: {
-    alignSelf: "stretch",
-    borderRadius: 5,
-    height: 48,
-    flexShrink: 0,
-    overflow: "hidden",
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    boxSizing: "border-box",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  sugesto1DropdownView: {
-    position: "absolute",
-    marginLeft: -173.12,
-    top: 366,
-    left: "50%",
-    width: 166.25,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  labelText7: {
+  descriptionText4: {
     position: "relative",
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "500",
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: "Roboto",
     color: "#000",
     textAlign: "left",
+    display: "none",
   },
-  headerView7: {
+  headerView4: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
@@ -707,29 +612,73 @@ const styles = StyleSheet.create({
     boxSizing: "border-box",
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    fontFamily: "roboto",
-    fontWeight: "bold",
   },
-  preoCorretorFieldView: {
+  errorMessageText4: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText4: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText4: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView4: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
+  bairroFieldView: {
     position: "absolute",
-    marginLeft: 6.63,
-    top: 275,
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
+    top: 182,
     left: "50%",
     width: 166.25,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  labelText8: {
+  labelText5: {
     position: "relative",
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 24,
     fontWeight: "500",
     fontFamily: "Roboto",
     color: "#000",
     textAlign: "left",
   },
-  headerView8: {
+  descriptionText5: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#000",
+    textAlign: "left",
+    display: "none",
+  },
+  headerView5: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
@@ -747,20 +696,55 @@ const styles = StyleSheet.create({
     boxSizing: "border-box",
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    fontFamily: "roboto",
-    fontWeight: "bold",
   },
-  preoMedioFieldView: {
+  errorMessageText5: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText5: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText5: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView5: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
+  destinoFieldView: {
     position: "absolute",
-    marginLeft: -173.12,
-    top: 275,
+    transform: [
+      {
+        translateX: 6.75,
+      },
+    ],
+    top: 91,
     left: "50%",
     width: 166.25,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  labelText9: {
+  labelText6: {
     position: "relative",
     fontSize: 16,
     lineHeight: 24,
@@ -769,7 +753,16 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "left",
   },
-  headerView9: {
+  descriptionText6: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#000",
+    textAlign: "left",
+    display: "none",
+  },
+  headerView6: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
@@ -788,17 +781,54 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  areaFieldView: {
+  errorMessageText6: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText6: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText6: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView6: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
+  contatoFieldView: {
     position: "absolute",
-    marginLeft: 6.88,
-    top: 184,
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
+    top: 91,
     left: "50%",
     width: 166.25,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  labelText10: {
+  labelText7: {
     position: "relative",
     fontSize: 16,
     lineHeight: 24,
@@ -807,14 +837,23 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "left",
   },
-  headerView10: {
+  descriptionText7: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#000",
+    textAlign: "left",
+    display: "none",
+  },
+  headerView7: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
   fieldTextInput7: {
     alignSelf: "stretch",
-    borderRadius: 5,
+    borderRadius: 4,
     backgroundColor: "rgba(188, 189, 192, 0.3)",
     height: 48,
     flexShrink: 0,
@@ -826,17 +865,54 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  bairroFieldView: {
+  errorMessageText7: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#ff8686",
+    textAlign: "left",
+    display: "none",
+  },
+  successMessageText7: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#19c18f",
+    textAlign: "left",
+    display: "none",
+  },
+  subText7: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#b6bff3",
+    textAlign: "left",
+    display: "none",
+  },
+  footerView7: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    display: "none",
+  },
+  corretorFieldView: {
     position: "absolute",
-    marginLeft: -173.12,
-    top: 182,
+    transform: [
+      {
+        translateX: 6.75,
+      },
+    ],
+    top: 0,
     left: "50%",
     width: 166.25,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  labelText11: {
+  labelText8: {
     position: "relative",
     fontSize: 16,
     lineHeight: 24,
@@ -845,7 +921,16 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "left",
   },
-  headerView11: {
+  descriptionText8: {
+    position: "relative",
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: "Roboto",
+    color: "#000",
+    textAlign: "left",
+    display: "none",
+  },
+  headerView8: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
@@ -864,123 +949,46 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  destinoFieldView: {
-    position: "absolute",
-    marginLeft: 6.63,
-    top: 91,
-    left: "50%",
-    width: 166.25,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  labelText12: {
+  errorMessageText8: {
     position: "relative",
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "500",
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: "Roboto",
-    color: "#000",
+    color: "#ff8686",
     textAlign: "left",
+    display: "none",
   },
-  headerView12: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  fieldTextInput9: {
-    alignSelf: "stretch",
-    borderRadius: 5,
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-    height: 48,
-    flexShrink: 0,
-    overflow: "hidden",
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    boxSizing: "border-box",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  contatoFieldView: {
-    position: "absolute",
-    marginLeft: -173.12,
-    top: 91,
-    left: "50%",
-    width: 166.25,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  labelText13: {
+  successMessageText8: {
     position: "relative",
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "500",
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: "Roboto",
-    color: "#000",
+    color: "#19c18f",
     textAlign: "left",
+    display: "none",
   },
-  headerView13: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  fieldTextInput10: {
-    alignSelf: "stretch",
-    borderRadius: 4,
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-    height: 48,
-    flexShrink: 0,
-    overflow: "hidden",
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    boxSizing: "border-box",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  corretorFieldView: {
-    position: "absolute",
-    marginLeft: 6.63,
-    top: 0,
-    left: "50%",
-    width: 166.25,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  labelText14: {
+  subText8: {
     position: "relative",
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "500",
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: "Roboto",
-    color: "#000",
+    color: "#b6bff3",
     textAlign: "left",
+    display: "none",
   },
-  headerView14: {
+  footerView8: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
-  },
-  fieldTextInput11: {
-    alignSelf: "stretch",
-    borderRadius: 5,
-    backgroundColor: "rgba(188, 189, 192, 0.3)",
-    height: 48,
-    flexShrink: 0,
-    overflow: "hidden",
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    boxSizing: "border-box",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    display: "none",
   },
   dataFieldView: {
     position: "absolute",
-    marginLeft: -173.12,
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
     top: 0,
     left: "50%",
     width: 166.25,
@@ -990,11 +998,15 @@ const styles = StyleSheet.create({
   },
   inputDadosCorretor: {
     position: "absolute",
-    marginLeft: -173,
+    transform: [
+      {
+        translateX: -173,
+      },
+    ],
     top: 154,
     left: "50%",
-    width: 346.25,
-    height: 624,
+    width: 346,
+    height: 348,
   },
   botoADDIcon: {
     position: "absolute",
@@ -1033,22 +1045,20 @@ const styles = StyleSheet.create({
     textAlign: "justify",
   },
   icon: {
-    width: "100%",
-    height: "100%",
+    width: 55,
+    height: 55,
   },
   botoCONFIRMAPressable: {
     position: "absolute",
     right: 15,
     bottom: 10,
-    width: 55,
-    height: 55,
   },
   telaAddImvel: {
     position: "relative",
     backgroundColor: "#fff",
     flex: 1,
     width: "100%",
-    height: 1100,
+    height: 835,
     overflow: "hidden",
   },
 });
