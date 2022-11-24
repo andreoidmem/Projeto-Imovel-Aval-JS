@@ -15,7 +15,6 @@ const App = () => {
   const SplashScreen = () => <View />;
 
   return (
-    <>
       <NavigationContainer>
         {hideSplashScreen ? (
           <Stack.Navigator initialRouteName="TelaListaImveis">
@@ -50,7 +49,6 @@ const App = () => {
           <SplashScreen />
         )}
       </NavigationContainer>
-    </>
   );
 };
 export default App;

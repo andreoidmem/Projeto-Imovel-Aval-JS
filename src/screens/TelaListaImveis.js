@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import { Text, StyleSheet, Image, Pressable, View, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, StyleSheet, Image, Pressable, View, FlatList, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import db from "../config/firebaseconfig";
 
@@ -8,19 +8,19 @@ const TelaListaImveis = () => {
   const [imvel, setImvel] = useState([])
 
 
-  useEffect(()=>{
-    db.collection("ImovelDB").onSnapshot((query)=> {
+  useEffect(() => {
+    db.collection("ImovelDB").onSnapshot((query) => {
       const list = [];
-      query.forEach((doc)=> {
+      query.forEach((doc) => {
         list.push({ ...doc.data(), id: doc.id })
       })
       setImvel(list)
     })
-   }, [])
+  }, [])
 
   return (
     <SafeAreaView style={styles.telaListaImveis}>
-  
+
       <Image
         style={styles.botoRecarregarIcon}
         resizeMode="cover"
@@ -40,25 +40,40 @@ const TelaListaImveis = () => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={imvel}
-        renderItem={( { item } )=>{
-          return(
+        renderItem={({ item }) => {
+          return (
             <View style={styles.Tasks}>
-            <Text
-              style={styles.DescriptionTask}
-              onPress={()=>
-                navigation.navigate("TelaVerImvel",{
-                  id: item.id,
-                  description: item.description,
-                })
-              }
-            >
-            {item.DESTINO}  
-            </Text>  
- 
-          </View>
+              <Text
+                style={styles.DescriptionTask}
+                onPress={() =>
+                  navigation.navigate("TelaVerImvel", {
+                    id: item.id,
+                    CPF: item.CPF,
+                    CELL: item.CELL,
+                    DATA: item.DATA,
+                    CORRETOR: item.CORRETOR,
+                    CLIENTE: item.CLIENTE,
+                    DESTINO: item.DESTINO,
+                    BAIRRO: item.BAIRRO,
+                    AREA: item.AREA,
+                    PAVALIADO: item.PAVALIADO,
+                    PCLIENTE: item.PCLIENTE,
+                    PFINAL: item.PFINAL,
+                    AMOSTRA1: item.AMOSTRA1,
+                    AMOSTRA2: item.AMOSTRA2,
+                    AMOSTRA3: item.AMOSTRA3,
+              
+              
+                  })
+                }
+              >
+                {item.DESTINO}
+              </Text>
+
+            </View>
           )
         }}
-        />
+      />
 
       <Pressable
         style={styles.botoADDPressable}
@@ -108,38 +123,38 @@ const styles = StyleSheet.create({
   },
   telaListaImveis: {
     flex: 1,
-    backgroundColor:"#fff",
+    backgroundColor: "#fff",
     paddingTop: 65
   },
-  Tasks:{
-    width:"100%",
-    flexDirection:"row",
-    justifyContent:"center",
-    marginTop:15,
-   },
-   DescriptionTask:{
-    width:"75%",
-    alignContent:"flex-start",
-    backgroundColor:"#f5f5f5cf",
-    padding:12,
+  Tasks: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 15,
+  },
+  DescriptionTask: {
+    width: "75%",
+    alignContent: "flex-start",
+    backgroundColor: "#f5f5f5cf",
+    padding: 12,
     paddingHorizontal: 20,
-    borderRadius:50,
+    borderRadius: 50,
     marginBottom: 5,
-    marginRight:15,
-    color:"#282b2db5",
-   },
-   iconButton:{
-    color:"#ffffff",
-    fontSize:25,
-    fontWeight:"bold",
-   },
-   deleteTask:{
+    marginRight: 15,
+    color: "#282b2db5",
+  },
+  iconButton: {
+    color: "#ffffff",
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  deleteTask: {
     position: "absolute",
     top: 10,
     left: 9,
     width: 25,
     height: 25,
-  }, 
+  },
 });
 
 export default TelaListaImveis;

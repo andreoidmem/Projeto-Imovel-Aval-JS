@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useState } from "react";
 import {
   Text,
   StyleSheet,
@@ -14,7 +13,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { TextInputMask } from "react-native-masked-text";
-import { TextInputMaskMethods } from "react-native-masked-text"
 import db from "../config/firebaseconfig";
 
 
@@ -27,27 +25,83 @@ const TelaAddImvel = () => {
   const [DESTINO, setDESTINO,] = React.useState(''); // ENDEREÇO DO IMOVEL
   const [BAIRRO, setBAIRRO,] = React.useState(''); // BAIRRO DO IM0VEL
   const [AREA, setAREA,] = React.useState(''); // BAIRRO DO IM0VEL
-  const [R$AVAL, setR$AVAL,] = React.useState(''); // VALOR SUPOSTO PELA AVALIAÇÃO DO CORRETOR
-  const [R$CLIENT, setR$CLIENT,] = React.useState(''); // VALOR SUGERIDO PELO CLIENTE
-  const [R$FINAL, setR$FINAL] = React.useState(''); // VALOR FINAL BASEADO NA MÉDIA SUGERIDA + VALOR DA AVALIAÇÃO DO CORRETOR
-  
+  const [RSAVAL, setRSAVAL,] = React.useState(''); // VALOR SUPOSTO PELA AVALIAÇÃO DO CORRETOR
+  const [RSCLIENT, setRSCLIENT,] = React.useState(''); // VALOR SUGERIDO PELO CLIENTE
+  const [RSFINAL, setRSFINAL] = React.useState(''); // VALOR FINAL BASEADO NA MÉDIA SUGERIDA + VALOR DA AVALIAÇÃO DO CORRETOR
+  const [RAWAVAL, setRAWAVAL,] = React.useState('');
+  const [RSAMOSTRA1, setAMOSTRA1] = React.useState(0);
+  const [RSAMOSTRA2, setAMOSTRA2] = React.useState(0);
+  const [RSAMOSTRA3, setAMOSTRA3] = React.useState(0);
+
 
   const navigation = useNavigation();
-  
+
   function addImovel() {
     db.collection("ImovelDB").add({
       CPF: CPF,
       CELL: CELL,
       DATA: DATA,
       CORRETOR: CORRETOR,
+      CLIENTE: CLIENTE,
       DESTINO: DESTINO,
       BAIRRO: BAIRRO,
-      ÁREA: AREA,
-      PREÇO_AVALIADO: R$AVAL,
-      PREÇO_CLIENTE: R$CLIENT,
-      PREÇO_FINAL: R$FINAL,
+      AREA: AREA,
+      PAVALIADO: RSAVAL,
+      PCLIENTE: RSCLIENT,
+      PFINAL: RSFINAL,
+      AMOSTRA1: RSAMOSTRA1,
+      AMOSTRA2: RSAMOSTRA2,
+      AMOSTRA3: RSAMOSTRA3,
+
     })
     navigation.goBack()
+  }
+
+  function mediacalc() {
+
+    if (RSAMOSTRA1 != 0 && RSAMOSTRA2 != 0 && RSAMOSTRA3 != 0) {
+
+      var valCorretor = parseFloat(RAWAVAL)
+      var valAmostra1 = parseFloat(RSAMOSTRA1)
+      var valAmostra2 = parseFloat(RSAMOSTRA2)
+      var valAmostra3 = parseFloat(RSAMOSTRA3)
+      var ValFinal
+
+      ValFinal = (valCorretor + valAmostra1 + valAmostra2 + valAmostra3) / 4
+      setRSFINAL(ValFinal)
+
+
+    } else {
+      if (RSAMOSTRA1 != 0 && RSAMOSTRA2 != 0) {
+
+        var valCorretor = parseFloat(RAWAVAL)
+        var valAmostra1 = parseFloat(RSAMOSTRA1)
+        var valAmostra2 = parseFloat(RSAMOSTRA2)
+        var ValFinal
+
+        ValFinal = (valCorretor + valAmostra1 + valAmostra2) / 3
+        setRSFINAL(ValFinal)
+
+      } else {
+        if (RSAMOSTRA1 != 0) {
+
+          var valCorretor = parseFloat(RAWAVAL)
+          var valAmostra1 = parseFloat(RSAMOSTRA1)
+          var ValFinal
+
+          ValFinal = (valCorretor + valAmostra1) / 2
+          setRSFINAL(ValFinal)
+
+        } else {
+
+          setRSFINAL(RSAVAL)
+
+        }
+
+      }
+
+    }
+
   }
 
   return (
@@ -95,10 +149,89 @@ const TelaAddImvel = () => {
             <View style={styles.inputDadosCorretor}>
               <View style={styles.valorFinalFieldView}>
                 <View style={styles.headerView2}>
-                  <Text style={styles.labelText2}>Valor final da avaliação</Text>
+                  <Text style={styles.labelText2}>Valor final da avaliação calculado automaticamente, insira amostras em ordem crescente</Text>
+                </View>
+              </View>
+              <View style={styles.sugesto3DropdownView}>
+                <View style={styles.headerView3}>
+                  <Text style={styles.labelText3}>Amostra 3</Text>
                 </View>
                 <TextInputMask
-                  style={[styles.fieldTextInput2, styles.mt4]}
+                  style={styles.fieldTextInput2}
+                  placeholder="Valor da amostra em R$"
+                  keyboardType="numeric"
+                  autoCapitalize="none"
+                  placeholderTextColor="#23856d"
+                  type="money"
+                  options={{
+                    precision: 2,
+                    separator: ',',
+                    delimiter: '.',
+                    unit: 'R$',
+                    suffixUnit: '',
+                  }}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => { setAMOSTRA3(rawValue) }}
+                  onEndEditing={() => mediacalc()}
+
+                  value={RSAMOSTRA3}
+                />
+              </View>
+              <View style={styles.sugesto2DropdownView}>
+                <View style={styles.headerView4}>
+                  <Text style={styles.labelText4}>Amostra 2</Text>
+                </View>
+                <TextInputMask
+                  style={styles.fieldTextInput2}
+                  placeholder="Valor da amostra em R$"
+                  keyboardType="numeric"
+                  autoCapitalize="none"
+                  placeholderTextColor="#23856d"
+                  type="money"
+                  options={{
+                    precision: 2,
+                    separator: ',',
+                    delimiter: '.',
+                    unit: 'R$',
+                    suffixUnit: '',
+                  }}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => { setAMOSTRA2(rawValue) }}
+                  onEndEditing={() => mediacalc()}
+
+                  value={RSAMOSTRA2}
+
+                />
+              </View>
+              <View style={styles.preoSugeridoFieldView}>
+                <View style={styles.headerView5}>
+                  <Text style={styles.labelText5}>Valor Sugerido</Text>
+                </View>
+                <TextInputMask
+                  style={[styles.fieldTextInput3, styles.mt4]}
+                  placeholder="Valor R$ do cliente"
+                  keyboardType="numeric"
+                  placeholderTextColor="#23856d"
+                  type="money"
+                  options={{
+                    precision: 2,
+                    separator: ',',
+                    delimiter: '.',
+                    unit: 'R$',
+                    suffixUnit: ''
+                  }}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => setRSCLIENT(masked)}
+                  value={RSCLIENT}
+
+                />
+              </View>
+              <View style={styles.sugesto1DropdownView}>
+                <View style={styles.headerView6}>
+                  <Text style={styles.labelText6}>Amostra 1</Text>
+                </View>
+                <TextInputMask
+                  style={styles.fieldTextInput2}
                   placeholder="Valor final em R$"
                   keyboardType="numeric"
                   autoCapitalize="none"
@@ -112,60 +245,12 @@ const TelaAddImvel = () => {
                     suffixUnit: '',
                   }}
                   includeRawValueInChangeText={true}
-                  onChangeText={(rawValue) => setR$FINAL(rawValue)}                 
-                  value={R$FINAL}
+                  onChangeText={(masked, rawValue) => { setAMOSTRA1(rawValue) }}
+                  onEndEditing={() => mediacalc()}
 
-                  
-                />
-              </View>
-              <View style={styles.sugesto3DropdownView}>
-                <View style={styles.headerView3}>
-                  <Text style={styles.labelText3}>Amostra 3</Text>
-                </View>
-                <View style={[styles.fieldView, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
-              </View>
-              <View style={styles.sugesto2DropdownView}>
-                <View style={styles.headerView4}>
-                  <Text style={styles.labelText4}>Amostra 2</Text>
-                </View>
-                <View style={[styles.fieldView1, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
-              </View>
-              <View style={styles.preoSugeridoFieldView}>
-                <View style={styles.headerView5}>
-                  <Text style={styles.labelText5}>Valor Sugerido</Text>
-                </View>
-                <TextInputMask
-                  style={[styles.fieldTextInput3, styles.mt4]}
-                  placeholder="R$"
-                  keyboardType="numeric"
-                  placeholderTextColor="#23856d"
-                  type="money"
-                  options={{
-                    precision: 2,
-                    separator: ',',
-                    delimiter: '.',
-                    unit: 'R$',
-                    suffixUnit: ''
-                  }}
-                  includeRawValueInChangeText={true}
-                  onChangeText={(rawValue) => setR$CLIENT(rawValue)}                 
-                  value={R$CLIENT}
-
-
+                  value={RSAMOSTRA1}
 
                 />
-              </View>
-              <View style={styles.sugesto1DropdownView}>
-                <View style={styles.headerView6}>
-                  <Text style={styles.labelText6}>Amostra 1</Text>
-                </View>
-                <View style={[styles.fieldView2, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
               </View>
               <View style={styles.preoCorretorFieldView}>
                 <View style={styles.headerView7}>
@@ -185,18 +270,19 @@ const TelaAddImvel = () => {
                     suffixUnit: ''
                   }}
                   includeRawValueInChangeText={true}
-                  onChangeText={(rawValue) => setR$AVAL(rawValue)}                 
-                  value={R$AVAL}
+                  onChangeText={(masked, rawValue) => { setRSAVAL(masked), setRAWAVAL(rawValue) }}
+                  value={RSAVAL}
                 />
               </View>
               <View style={styles.preoMedioFieldView}>
                 <View style={styles.headerView8}>
-                  <Text style={styles.labelText8}>Valor Médio Sugerido</Text>
+                  <Text style={styles.labelText8}>Valor final da avaliação</Text>
                 </View>
                 <TextInputMask
                   style={[styles.fieldTextInput5, styles.mt4]}
-                  placeholder="R$"
+                  placeholder="Valor final em R$"
                   keyboardType="numeric"
+                  autoCapitalize="none"
                   placeholderTextColor="#23856d"
                   type="money"
                   options={{
@@ -204,9 +290,12 @@ const TelaAddImvel = () => {
                     separator: ',',
                     delimiter: '.',
                     unit: 'R$',
-                    suffixUnit: ''
+                    suffixUnit: '',
                   }}
-                  editable={false}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => setRSFINAL(masked)}
+
+                  value={RSFINAL}
                 />
               </View>
               <View style={styles.areaFieldView}>
@@ -215,7 +304,7 @@ const TelaAddImvel = () => {
                 </View>
                 <TextInput
                   style={[styles.fieldTextInput6, styles.mt4]}
-                  placeholder="insira em 'M² x M²'"
+                  placeholder="insira em 'M²xM²"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
                   onChangeText={input => setAREA(input)}
@@ -239,7 +328,7 @@ const TelaAddImvel = () => {
               </View>
               <View style={styles.destinoFieldView}>
                 <View style={styles.headerView11}>
-                  <Text style={styles.labelText11}>Destino</Text>
+                  <Text style={styles.labelText11}>Endereço</Text>
                 </View>
                 <TextInput
                   style={[styles.fieldTextInput8, styles.mt4]}
@@ -279,6 +368,9 @@ const TelaAddImvel = () => {
                   placeholder="Nome do Corretor"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
+                  value={CORRETOR}
+                  onChangeText={input => setCORRETOR(input)}
+
                 />
               </View>
               <View style={styles.dataFieldView}>
@@ -309,7 +401,7 @@ const TelaAddImvel = () => {
               <Text style={styles.textoAddImans}>Adicionar Imagens</Text>
             </View>
             <Text style={styles.textoNumImovel} numberOfLines={1}>
-              Imovel N°
+              Imovel Novo
             </Text>
             <Pressable
               style={styles.botoCONFIRMAPressable}
@@ -481,12 +573,12 @@ const styles = StyleSheet.create({
   labelText2: {
     position: "relative",
     fontSize: 15,
-    lineHeight: 24,
+    lineHeight: 20,
     fontWeight: "500",
     fontFamily: "Roboto",
     color: "#000",
     textAlign: "center",
-    width: 166,
+    width: 300,
   },
   headerView2: {
     width: 166,
@@ -512,13 +604,12 @@ const styles = StyleSheet.create({
   },
   valorFinalFieldView: {
     position: "absolute",
-    marginLeft: -83.12,
+    marginLeft: 25,
     top: 548,
-    left: "50%",
     width: 166,
     flexDirection: "column",
     alignItems: "flex-start",
-    justifyContent: "flex-start",
+    justifyContent: "flex-end",
   },
   labelText3: {
     position: "relative",

@@ -6,28 +6,135 @@ import {
   View,
   TextInput,
   Image,
+  KeyboardAvoidingView,
   Pressable,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
   Alert,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { TextInputMask } from "react-native-masked-text";
+import db from "../config/firebaseconfig";
 
-const TelaVerImvel = () => {
-  const onEditImageClick = useCallback(() => {
-    Alert.alert("Editar Registro?", "Confirmação", [
-      {
-        text: "Habilitar Ediçãoclear",
-        onPress: () => console.log("Editar pressed"),
-      },
-      {
-        text: "Cancelar Edição",
-        onPress: () => console.log("Cancelar Edição pressed"),
-      },
-    ]);
-  }, []);
 
-  const [CPF, setCPF,] = React.useState('');
-  const [CELL, setCEll,] = React.useState('');
-  const [PCRT, setPCRT,] = React.useState('');
-  const [DATA, setDATA,] = React.useState('');
+const TelaVerImvel = ({ route }) => {
+
+  const [CPF, setCPF,] = React.useState(route.params.CPF); //CPF DO CLIENTE
+  const [CLIENTE, setCLIENTE,] = React.useState(route.params.CLIENTE); // NOME CORRETOR
+  const [CELL, setCEll,] = React.useState(route.params.CELL); //N° PARA CONTATO
+  const [DATA, setDATA,] = React.useState(route.params.DATA); // DATA DA AVALIAÇÃO
+  const [CORRETOR, setCORRETOR,] = React.useState(route.params.CORRETOR); // NOME CORRETOR
+  const [DESTINO, setDESTINO,] = React.useState(route.params.DESTINO); // ENDEREÇO DO IMOVEL
+  const [BAIRRO, setBAIRRO,] = React.useState(route.params.BAIRRO); // BAIRRO DO IM0VEL
+  const [AREA, setAREA,] = React.useState(route.params.AREA); // BAIRRO DO IM0VEL
+  const [RSAVAL, setRSAVAL,] = React.useState(route.params.PAVALIADO); // VALOR SUPOSTO PELA AVALIAÇÃO DO CORRETOR
+  const [RSCLIENT, setRSCLIENT,] = React.useState(route.params.PCLIENTE); // VALOR SUGERIDO PELO CLIENTE
+  const [RSFINAL, setRSFINAL] = React.useState(route.params.PFINAL); // VALOR FINAL BASEADO NA MÉDIA SUGERIDA + VALOR DA AVALIAÇÃO DO CORRETOR
+  const [RAWAVAL, setRAWAVAL,] = React.useState(route.params.PAVALIADO);
+  const [RSAMOSTRA1, setAMOSTRA1] = React.useState(route.params.AMOSTRA1);
+  const [RSAMOSTRA2, setAMOSTRA2] = React.useState(route.params.AMOSTRA2);
+  const [RSAMOSTRA3, setAMOSTRA3] = React.useState(route.params.AMOSTRA3);
+  const idImovel = route.params.id
+  var [EditState, setEdit] = React.useState(false)
+
+  function editRegistro(id, CPF, CELL, DATA, CORRETOR, CLIENTE, DESTINO, BAIRRO, AREA, PAVALIADO, PCLIENTE, PFINAL, AMOSTRA1, AMOSTRA2, AMOSTRA3) {
+
+    if (EditState == true) {
+
+      Alert.alert("Salvar Editção?", "Confirmação", [
+        {
+          text: "Salvar Edição",
+
+          onPress: () => setEdit(false) | db.collection("ImovelDB").doc(id).update({
+            CPF: CPF,
+            CELL: CELL,
+            DATA: DATA,
+            CORRETOR: CORRETOR,
+            CLIENTE: CLIENTE,
+            DESTINO: DESTINO,
+            BAIRRO: BAIRRO,
+            AREA: AREA,
+            PAVALIADO: RAWAVAL,
+            PCLIENTE: RSCLIENT,
+            PFINAL: RSFINAL,
+            AMOSTRA1: RSAMOSTRA1,
+            AMOSTRA2: RSAMOSTRA2,
+            AMOSTRA3: RSAMOSTRA3,
+          }),
+
+        },
+        {
+          text: "Cancelar Salvar",
+          onPress: () => setEdit(false),
+        },
+      ]);
+
+
+
+    } else {
+
+      Alert.alert("Editar Registro?", "Confirmação", [
+        {
+          text: "Habilitar Edição",
+          onPress: () => setEdit(true),
+        },
+        {
+          text: "Cancelar Edição",
+        },
+      ]);
+
+
+    }
+  }
+
+  function mediacalc() {
+
+    if (RSAMOSTRA1 != 0 && RSAMOSTRA2 != 0 && RSAMOSTRA3 != 0) {
+
+      var valCorretor = parseFloat(RAWAVAL)
+      var valAmostra1 = parseFloat(RSAMOSTRA1)
+      var valAmostra2 = parseFloat(RSAMOSTRA2)
+      var valAmostra3 = parseFloat(RSAMOSTRA3)
+      var ValFinal
+
+      ValFinal = (valCorretor + valAmostra1 + valAmostra2 + valAmostra3) / 4
+      setRSFINAL(ValFinal)
+    } else {
+      if (RSAMOSTRA1 != 0 && RSAMOSTRA2 != 0) {
+
+        var valCorretor = parseFloat(RAWAVAL)
+        var valAmostra1 = parseFloat(RSAMOSTRA1)
+        var valAmostra2 = parseFloat(RSAMOSTRA2)
+        var ValFinal
+
+        ValFinal = (valCorretor + valAmostra1 + valAmostra2) / 3
+        setRSFINAL(ValFinal)
+
+
+      } else {
+        if (RSAMOSTRA1 != 0) {
+
+          var valCorretor = parseFloat(RAWAVAL)
+          var valAmostra1 = parseFloat(RSAMOSTRA1)
+          var ValFinal
+
+          ValFinal = (valCorretor + valAmostra1) / 2
+          setRSFINAL(ValFinal)
+
+
+        } else {
+
+          setRSFINAL(RAWAVAL)
+
+        }
+
+      }
+
+    }
+
+  }
+
 
 
   return (
@@ -49,9 +156,9 @@ const TelaVerImvel = () => {
                   placeholderTextColor="#23856d"
                   autoComplete="off"
                   type="cpf"
-                  value={CPF}
                   onChangeText={input => setCPF(input)}
-                  editable={false}
+                  value={CPF}
+                  editable={EditState}
 
                 />
               </View>
@@ -65,7 +172,9 @@ const TelaVerImvel = () => {
                   keyboardType="default"
                   autoCapitalize="words"
                   placeholderTextColor="#23856d"
-                  editable={false}
+                  onChangeText={input => setCLIENTE(input)}
+                  value={CLIENTE}
+                  editable={EditState}
 
                 />
               </View>
@@ -76,33 +185,63 @@ const TelaVerImvel = () => {
             <View style={styles.inputDadosCorretor}>
               <View style={styles.valorFinalFieldView}>
                 <View style={styles.headerView2}>
-                  <Text style={styles.labelText2}>Valor final da avaliação</Text>
+                  <Text style={styles.labelText2}>Valor final da avaliação calculado automaticamente, insira amostras em ordem crescente</Text>
                 </View>
-                <TextInput
-                  style={[styles.fieldTextInput2, styles.mt4]}
-                  placeholder="Valor final em R$"
-                  keyboardType="numeric"
-                  autoCapitalize="none"
-                  placeholderTextColor="#23856d"
-                  editable={false}
-
-                />
               </View>
               <View style={styles.sugesto3DropdownView}>
                 <View style={styles.headerView3}>
                   <Text style={styles.labelText3}>Amostra 3</Text>
                 </View>
-                <View style={[styles.fieldView, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
+                <TextInputMask
+                  style={styles.fieldTextInput2}
+                  placeholder="Valor da amostra em R$"
+                  keyboardType="numeric"
+                  autoCapitalize="none"
+                  placeholderTextColor="#23856d"
+                  type="money"
+                  options={{
+                    precision: 2,
+                    separator: ',',
+                    delimiter: '.',
+                    unit: 'R$',
+                    suffixUnit: '',
+                  }}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => { setAMOSTRA3(rawValue) }}
+                  onEndEditing={() => mediacalc()}
+
+                  value={RSAMOSTRA3}
+                  editable={EditState}
+
+                />
               </View>
               <View style={styles.sugesto2DropdownView}>
                 <View style={styles.headerView4}>
                   <Text style={styles.labelText4}>Amostra 2</Text>
                 </View>
-                <View style={[styles.fieldView1, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
+                <TextInputMask
+                  style={styles.fieldTextInput2}
+                  placeholder="Valor da amostra em R$"
+                  keyboardType="numeric"
+                  autoCapitalize="none"
+                  placeholderTextColor="#23856d"
+                  type="money"
+                  options={{
+                    precision: 2,
+                    separator: ',',
+                    delimiter: '.',
+                    unit: 'R$',
+                    suffixUnit: '',
+                  }}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => { setAMOSTRA2(rawValue) }}
+                  onEndEditing={() => mediacalc()}
+
+
+                  value={RSAMOSTRA2}
+                  editable={EditState}
+
+                />
               </View>
               <View style={styles.preoSugeridoFieldView}>
                 <View style={styles.headerView5}>
@@ -121,19 +260,39 @@ const TelaVerImvel = () => {
                     unit: 'R$',
                     suffixUnit: ''
                   }}
-                  editable={false}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => setRSCLIENT(masked)}
+                  value={RSCLIENT}
+                  editable={EditState}
 
-                  value={PCRT}
-                  onChangeText={input => setPCRT(input)}
                 />
               </View>
               <View style={styles.sugesto1DropdownView}>
                 <View style={styles.headerView6}>
                   <Text style={styles.labelText6}>Amostra 1</Text>
                 </View>
-                <View style={[styles.fieldView2, styles.mt4]}>
-                  <Text>//Aqui dropdown</Text>
-                </View>
+                <TextInputMask
+                  style={styles.fieldTextInput2}
+                  placeholder="Valor final em R$"
+                  keyboardType="numeric"
+                  autoCapitalize="none"
+                  placeholderTextColor="#23856d"
+                  type="money"
+                  options={{
+                    precision: 2,
+                    separator: ',',
+                    delimiter: '.',
+                    unit: 'R$',
+                    suffixUnit: '',
+                  }}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => { setAMOSTRA1(rawValue) }}
+                  onEndEditing={() => mediacalc()}
+
+                  value={RSAMOSTRA1}
+                  editable={EditState}
+
+                />
               </View>
               <View style={styles.preoCorretorFieldView}>
                 <View style={styles.headerView7}>
@@ -152,18 +311,23 @@ const TelaVerImvel = () => {
                     unit: 'R$',
                     suffixUnit: ''
                   }}
-                  editable={false}
+                  includeRawValueInChangeText={true}
+                  onChangeText={(masked, rawValue) => { setRSAVAL(masked), setRAWAVAL(rawValue) }}
+                  onEndEditing={() => {mediacalc()}}
+                  value={RSAVAL}
+                  editable={EditState}
 
                 />
               </View>
               <View style={styles.preoMedioFieldView}>
                 <View style={styles.headerView8}>
-                  <Text style={styles.labelText8}>Valor Médio Sugerido</Text>
+                  <Text style={styles.labelText8}>Valor final da avaliação</Text>
                 </View>
-                <TextInput
+                <TextInputMask
                   style={[styles.fieldTextInput5, styles.mt4]}
-                  placeholder="R$"
+                  placeholder="Valor final em R$"
                   keyboardType="numeric"
+                  autoCapitalize="none"
                   placeholderTextColor="#23856d"
                   type="money"
                   options={{
@@ -171,9 +335,12 @@ const TelaVerImvel = () => {
                     separator: ',',
                     delimiter: '.',
                     unit: 'R$',
-                    suffixUnit: ''
+                    suffixUnit: '',
                   }}
-                  editable={false}
+                  onChange={(masked) => setRSFINAL(masked)}
+                  value={RSFINAL}
+                  editable={EditState}
+
                 />
               </View>
               <View style={styles.areaFieldView}>
@@ -182,10 +349,13 @@ const TelaVerImvel = () => {
                 </View>
                 <TextInput
                   style={[styles.fieldTextInput6, styles.mt4]}
-                  placeholder="M² x M²"
+                  placeholder="insira em 'M²xM². ex: 123x65'"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
-                  editable={false}
+                  onChangeText={input => setAREA(input)}
+                  value={AREA}
+
+                  editable={EditState}
 
                 />
               </View>
@@ -198,7 +368,9 @@ const TelaVerImvel = () => {
                   placeholder="Localização"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
-                  editable={false}
+                  onChangeText={input => setBAIRRO(input)}
+                  value={BAIRRO}
+                  editable={EditState}
 
                 />
               </View>
@@ -211,7 +383,10 @@ const TelaVerImvel = () => {
                   placeholder="Laudo de Avaliação"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
-                  editable={false}
+                  onChangeText={input => setDESTINO(input)}
+                  value={DESTINO}
+
+                  editable={EditState}
 
                 />
               </View>
@@ -230,10 +405,9 @@ const TelaVerImvel = () => {
                     withDDD: true,
                     dddMask: '(99) '
                   }}
-                  editable={false}
-
                   value={CELL}
                   onChangeText={input => setCEll(input)}
+                  editable={EditState}
                 />
               </View>
               <View style={styles.corretorFieldView}>
@@ -245,7 +419,10 @@ const TelaVerImvel = () => {
                   placeholder="Nome do Corretor"
                   keyboardType="default"
                   placeholderTextColor="#23856d"
-                  editable={false}
+                  value={CORRETOR}
+                  onChangeText={input => setCORRETOR(input)}
+
+                  editable={EditState}
 
                 />
               </View>
@@ -263,10 +440,11 @@ const TelaVerImvel = () => {
                   options={{
                     format: 'DD/MM/YYYY'
                   }}
-                  editable={false}
-
                   value={DATA}
                   onChangeText={input => setDATA(input)}
+
+                  editable={EditState}
+
                 />
               </View>
             </View>
@@ -278,8 +456,23 @@ const TelaVerImvel = () => {
               />
               <Text style={styles.textoAddImans}>View de imagens</Text>
             </View>
-            <Text style={styles.textoNumImovel}>Imovel N°</Text>
-            <Pressable style={styles.editPressable} onPress={onEditImageClick}>
+            <Text style={styles.textoNumImovel}>Visualização de Imovel</Text>
+            <Pressable style={styles.editPressable} onPress={() => {
+              editRegistro(idImovel, CPF,
+                CELL,
+                DATA,
+                CORRETOR,
+                CLIENTE,
+                DESTINO,
+                BAIRRO,
+                AREA,
+                RSAVAL,
+                RSCLIENT,
+                RSFINAL,
+                RSAMOSTRA1,
+                RSAMOSTRA2,
+                RSAMOSTRA3)
+            }}>
               <Image
                 style={styles.icon}
                 resizeMode="cover"
@@ -446,12 +639,12 @@ const styles = StyleSheet.create({
   labelText2: {
     position: "relative",
     fontSize: 15,
-    lineHeight: 24,
+    lineHeight: 20,
     fontWeight: "500",
     fontFamily: "Roboto",
     color: "#000",
     textAlign: "center",
-    width: 166,
+    width: 300,
   },
   headerView2: {
     width: 166,
@@ -477,13 +670,12 @@ const styles = StyleSheet.create({
   },
   valorFinalFieldView: {
     position: "absolute",
-    marginLeft: -83.12,
+    marginLeft: 25,
     top: 548,
-    left: "50%",
     width: 166,
     flexDirection: "column",
     alignItems: "flex-start",
-    justifyContent: "flex-start",
+    justifyContent: "flex-end",
   },
   labelText3: {
     position: "relative",
@@ -997,16 +1189,16 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "justify",
   },
-  icon: {
-    width: "100%",
-    height: "100%",
-  },
-  botoCONFIRMAPressable: {
+  editPressable: {
     position: "absolute",
     right: 15,
     bottom: 10,
     width: 55,
     height: 55,
+  },
+  icon: {
+    width: "100%",
+    height: "100%",
   },
   telaAddImvel: {
     position: "relative",
